@@ -85,11 +85,18 @@ def populate_folder(number_of_files, include_invalid=False):
     return folder
 
 def random_string(length, format=None):
+    prefix = ''
     format_choice = string.ascii_uppercase + string.digits
     if format == 'int':
         format_choice = string.digits
     elif format == 'str':
-        format_choice = string.asci_uppercase
+        format_choice = string.ascii_uppercase
+    else:
+        # if prefix is a custom value then we treat it as a string
+        #   and prefix the folder with the passed in value
+        #   this lets us include custom characters in the random generation
+        prefix = format
+        format_choice = string.ascii_uppercase
 
     return ''.join(random.SystemRandom().choice(format_choice) for _ in range(length))
 

@@ -495,7 +495,6 @@ full_path=%custom|%city
     assert path_plain == 'Unknown Location', path_plain
     assert path_city == 'Sunnyvale', path_city
 
-
 def test_get_folder_path_with_int_in_source_path():
     # gh-239
     filesystem = FileSystem()
@@ -508,6 +507,26 @@ def test_get_folder_path_with_int_in_source_path():
     path = filesystem.get_folder_path(media.get_metadata())
 
     assert path == os.path.join('2015-12-Dec','Unknown Location'), path
+
+@mock.patch('elodie.config.config_file', '%s/config.ini-custom-path' % gettempdir())
+def test_get_folder_path_with_int_non_ascii_gh_379():
+    # gh-379
+    with open('%s/config.ini-custom-path' % gettempdir(), 'w') as f:
+        f.write("""
+[MapQuest]
+key=czjNKTtFjLydLteUBwdgKAIC8OAbGLUx
+        """)
+    filesystem = FileSystem()
+    temporary_folder, folder = helper.create_working_folder('Фото из садаФлешка 1ФОТОСредняя 2014-2015 ггПРАЗДНИК ОСЕНИ')
+
+    origin = os.path.join(folder,'gh-379.jpg')
+    shutil.copyfile(helper.get_file('gh-379.jpg'), origin)
+
+    media = Photo(origin)
+    path = filesystem.get_folder_path(media.get_metadata())
+
+    assert path == os.path.join('2014-10-Oct','Unknown Location'), path
+
 
 @mock.patch('elodie.config.config_file', '%s/config.ini-original-default-unknown-location' % gettempdir())
 def test_get_folder_path_with_original_default_unknown_location():
