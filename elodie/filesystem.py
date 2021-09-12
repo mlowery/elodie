@@ -168,7 +168,7 @@ class FileSystem(object):
                         place_name,
                     )
                     break
-                elif part in ('album', 'extension', 'title'):
+                elif part in ('album', 'extension', 'original_extension', 'title'):
                     if metadata[part]:
                         this_value = re.sub(self.whitespace_regex, '-', metadata[part].strip())
                         break
@@ -222,6 +222,8 @@ class FileSystem(object):
 
         if('File' in config and 'capitalization' in config['File'] and config['File']['capitalization'] == 'upper'):
             return name.upper()
+        elif('File' in config and 'capitalization' in config['File'] and config['File']['capitalization'] == 'none'):
+            return name
         else:
             return name.lower()
 
@@ -545,7 +547,7 @@ class FileSystem(object):
         file_name = self.get_file_name(metadata)
         dest_path = os.path.join(dest_directory, file_name)        
 
-        media.set_original_name()
+        #media.set_original_name()
 
         # If source and destination are identical then
         #  we should not write the file. gh-210

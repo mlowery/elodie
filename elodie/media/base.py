@@ -101,6 +101,7 @@ class Base(object):
             'original_name': self.get_original_name(),
             'base_name': os.path.splitext(os.path.basename(source))[0],
             'extension': self.get_extension(),
+            'original_extension': os.path.splitext(source)[1][1:],
             'directory_path': os.path.dirname(source)
         }
 
