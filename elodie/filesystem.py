@@ -547,6 +547,28 @@ class FileSystem(object):
         file_name = self.get_file_name(metadata)
         dest_path = os.path.join(dest_directory, file_name)        
 
+        # mlowery
+        # if dest_path exists, do not overwrite it; instead, append checksum to filename
+        if os.path.exists(dest_path):
+            existing_dest_path_checksum = self.process_checksum(dest_path, True)
+            log.info('mlowery: dest_path %s already exists with checksum %s but calculated same dest_path for new checksum %s; save new file with checksum in filename' %  (  # noqa
+                     dest_path,
+                     existing_dest_path_checksum,
+                     checksum
+            ))
+
+            # insert checksum before file extension and tolerate missing extension or multiple dots in filename
+            file_name_parts = file_name.rsplit('.', 1)
+
+            # If there's no dot or one dot (leading to two parts), insert `s` accordingly
+            if len(file_name_parts) == 2:
+                # Filename has an extension
+                file_name = f"{file_name_parts[0]}-{checksum}.{file_name_parts[1]}"
+            else:
+                # Filename has no extension
+                file_name = f"{file_name}-{checksum}"
+            dest_path = os.path.join(dest_directory, file_name)
+
         #media.set_original_name()
 
         # If source and destination are identical then
